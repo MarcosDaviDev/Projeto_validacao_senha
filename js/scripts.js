@@ -5,7 +5,10 @@ class Validator{
             'data-required',
             'data-min-length',
             'data-max-length',
-            
+            'data-email-validate',
+            'data-only-letters',
+            'data-equal',
+            'data-password-validate',
         ]
     }
 
@@ -69,12 +72,81 @@ class Validator{
         }
     }
 
+    // valida e-mails
+    emailvalidate(input){
+
+        // email@email.com -> email@email.com.br
+        let re = /\S+@\S+\.\S+/;
+
+        let email = input.value;
+
+        let errorMensage = `Insira um email no padrão email@email.com`;
+
+        if(!re.test(email)){
+            this.printMessage(input, errorMensage);
+        }
+    }    
+
+    // valida se o campo tem apenas letras
+    onlyletters(input){
+
+        let re = /^[A-Za-z]+$/;
+
+        let inputvalue = input.value;
+        
+        let errorMensage = `Esse campo não aceita nenhum caractere especial ou número`
+
+        if(!re.test(inputvalue)){
+            this.printMessage(input, errorMensage);
+        }
+
+    }
+
+    //verifica os campos de senhas
+    equal(input, inputName){
+
+        let inputToCompare = document.getElementsByName(inputName)[0];
+
+        let errorMensage = `As senhas precisam estar iguais`;
+
+        if(input.value != inputToCompare.value){
+            this.printMessage(input, errorMensage);
+        }
+
+    }
+
+    //valida o campo de senha
+    passwordvalidate(input){
+
+        //explodir string em um array
+        let charArr = input.value.split("");
+
+        let uppercases = 0;
+        let numbers = 0;
+
+        for(let i =0; charArr.length > i; i++){
+            if(charArr[i] === charArr[i].toUpperCase() && isNaN(parseInt(charArr[i]))){
+                uppercases++;
+            } else if(!isNaN(parseInt(charArr[i]))){
+                numbers++;
+            }
+        }
+
+        if(uppercases === 0 || numbers === 0){
+            let errorMensage = `A senha precisa ter pelo menos um número e uma letra maiúscula`;
+
+            this.printMessage(input, errorMensage);
+        }
+
+    }
+
     //método que imprime mensagens de erros na tela
     printMessage(input, msg){
 
         //verifica a quantidade de erros
         let errorsQty = input.parentNode.querySelector('.erro-validation');
 
+       //imprime erro só se não tiver erros 
        if(errorsQty === null){
             let template = document.querySelector('.erro-validation').cloneNode(true);
 
